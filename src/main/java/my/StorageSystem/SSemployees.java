@@ -7,7 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
-public class SSemployee {
+public class SSemployees {
 
     private static final String EMPLOYEE_FILE_PATH = "data/employee.csv";
 
@@ -36,5 +36,4 @@ public class SSemployee {
         }
     }
 }
-
 
