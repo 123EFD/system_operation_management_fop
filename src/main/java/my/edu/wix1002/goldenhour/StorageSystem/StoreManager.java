@@ -8,6 +8,8 @@ import com.opencsv.CSVWriter;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 public class StoreManager {
@@ -75,9 +77,41 @@ public class StoreManager {
 
 
         } catch (IOException e){
-            System.out.println("Error saving model data: " + e.getMessage());
+            System.err.println("Error saving model data: " + e.getMessage());
         }
         
     }
+    //SAVE ATTENDANCES (clock in)
+    public static void appendAttendance(String[] record) {
+        try (CSVWriter writer = new CSVWriter(
+            new FileWriter("data/attendance.csv", true))) {
+
+                writer.writeNext(record);
+
+            } catch (IOException e) {
+                System.err.println("Error appending attendance record: " + e.getMessage());
+            }
+    }
+    //clock out
+    public static void updateClockOut(String employeeID, String dateStr, String clockOutTime) {
+        String filePath = "data/attendance.csv";
+        try {
+            List<String> lines = Files.readAllLines(Paths.get(filePath));
+            for (int i = 1; i < lines.size(); i++){
+                String[] parts = lines.get(i).split("," , -1);
+                if (parts.length >= 5 && parts[0].equals(employeeID) && parts[1].equals(dateStr)){
+                    parts[3] = clockOutTime;
+                    lines.set(i, String.join(",", parts));
+                    break;
+                }
+            }
+            Files.write(Paths.get(filePath), lines);
+        } catch (IOException e) {
+            System.err.println("Error updating clock out: " + e.getMessage());
+        }
+        
+    }
+
+
 }
 
