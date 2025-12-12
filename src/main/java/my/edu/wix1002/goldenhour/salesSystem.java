@@ -2,6 +2,7 @@ package my.edu.wix1002.goldenhour;
 
 import my.edu.wix1002.goldenhour.model.Employee;
 import my.edu.wix1002.goldenhour.model.Model;
+import my.edu.wix1002.goldenhour.util.DataLoader;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -33,7 +34,7 @@ import java.util.*;
 public class salesSystem {
 
     // Change this path if DataLoader.MODEL_FILE_PATH becomes public or you want a relative path.
-    private static final String MODEL_CSV_PATH = "C:/Users/Chin Shi Er/OneDrive/Documents/Coding/system_operation_management_fop/data/model.csv";
+    private static final String MODEL_CSV_PATH = DataLoader.MODEL_FILE_PATH;
     private static final Path SALES_DIR = Paths.get("data", "sales");
     /*ofPattern(): create DateTimeFormatter instance by specifying a custom date and/or time pattern.
      * converting a string to a date/time object and vice versa.　
@@ -67,6 +68,7 @@ public class salesSystem {
         System.out.println("Date: " + now.toLocalDate().format(DATE_FMT));
         System.out.println("Time: " + now.format(TIME_PRINT_FMT));
         System.out.print("Customer Name: ");
+        System.out.println("Item(s) Purchased: ");
         String customerName = scanner.nextLine().trim();
 
         List<SaleItem> items = new ArrayList<>();
@@ -87,7 +89,7 @@ public class salesSystem {
             // Show unit price and available stock at employee outlet
             BigDecimal unitPrice = BigDecimal.valueOf(model.getPrice());
             int currentStockVal = model.getStockByOutlet().getOrDefault(outletCode, 0);
-            System.out.println("Unit Price: RM" + formatCurrency(unitPrice) + " | Available at " + outletCode + ": " + currentStockVal);
+            System.out.println("Unit Price: RM" + formatCurrency(unitPrice));
 
             System.out.print("Enter Quantity: ");
             String qtyLine = scanner.nextLine().trim();
@@ -120,6 +122,7 @@ public class salesSystem {
             System.out.println("No items added. Cancelling transaction.");
             return;
         }
+
 
         BigDecimal subtotal = BigDecimal.ZERO;
         for (SaleItem it : items) {
@@ -176,7 +179,6 @@ public class salesSystem {
         System.out.println("Sale recorded successfully.");
         System.out.println("Model quantities updated successfully.");
         System.out.println("Receipt generated: sales_" + now.toLocalDate().format(DATE_FMT) + ".txt");
-        System.out.println("Transaction ID: " + txId);
     }
 
     /**
