@@ -92,25 +92,48 @@ public class StoreManager {
                 System.err.println("Error appending attendance record: " + e.getMessage());
             }
     }
+
+
     //clock out
     public static void updateClockOut(String employeeID, String dateStr, String clockOutTime) {
-        String filePath = "data/attendance.csv";
-        try {
-            List<String> lines = Files.readAllLines(Paths.get(filePath));
-            for (int i = 1; i < lines.size(); i++){
-                String[] parts = lines.get(i).split("," , -1);
-                if (parts.length >= 5 && parts[0].equals(employeeID) && parts[1].equals(dateStr)){
-                    parts[3] = clockOutTime;
-                    lines.set(i, String.join(",", parts));
-                    break;
-                }
+    String filePath = "data/attendance.csv";
+
+    try {
+        List<String> lines = Files.readAllLines(Paths.get(filePath));
+
+        boolean updated = false;
+
+        for (int i = 1; i < lines.size(); i++) {
+            String line = lines.get(i);
+
+            if (line.isEmpty()) continue;
+            String[] parts = line.split(",", -1);
+
+            String empId = parts[0].trim().replace("\"", "");
+            String recDate = parts[1].trim().replace("\"", "");
+
+            if (empId.equals(employeeID) && recDate.equals(dateStr)) {
+                parts[3] = clockOutTime;
+
+                lines.set(i, String.join(",", parts));
+                updated = true;
+                break;
             }
-            Files.write(Paths.get(filePath), lines);
-        } catch (IOException e) {
-            System.err.println("Error updating clock out: " + e.getMessage());
         }
-        
+
+        Files.write(Paths.get(filePath), lines);
+
+        if (!updated) {
+            System.err.println("Warning: Clock out record not found or not updated.");
+        }
+
+    } catch (IOException e) {
+        System.err.println("Error updating clock out: " + e.getMessage());
     }
+}
+
+
+
 
     //SAVES SALES RECORD
     public static void appendSalesRecord(String[] saleRecord) {
